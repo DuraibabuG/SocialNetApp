@@ -9,10 +9,9 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import datetime, timedelta
-from rest_framework.settings import api_settings
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -49,14 +48,9 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    "DEFAULT_AUTHENTICATION_CLASSES": ["knox.auth.TokenAuthentication"],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-
+    # 'EXCEPTION_HANDLER': 'rcmtool.utils.custom_exception_handler',
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication', ),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',)
 }
 
 CORS_ALLOW_ALL_ORIGINS : True
@@ -77,7 +71,7 @@ ROOT_URLCONF = 'SocialNetApp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -139,6 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -148,22 +143,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "authapi.User"
 # KNOX_TOKEN_MODEL = 'knox.AuthToken'
 REST_KNOX = {
-  'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
   'AUTH_TOKEN_CHARACTER_LENGTH': 256,
   'TOKEN_TTL': timedelta(hours=10),
-#   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
-#   'TOKEN_LIMIT_PER_USER': None,
-#   'AUTO_REFRESH': False,
-#   'MIN_REFRESH_INTERVAL': 60,
-#   'AUTH_HEADER_PREFIX': 'Token',
-#   'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
-#   'TOKEN_MODEL': 'knox.AuthToken',
 }
 
 SWAGGER_SETTINGS = {
+    'DEFAULT_MODEL_DEPTH':-1,
+    'VALIDATOR_URL' : None,
     'SECURITY_DEFINITIONS': {
-        'basic': {
-            'type': 'basic'
-        }
-    }
+      'User Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+    },
+    'USE_SESSION_AUTH': False
 }

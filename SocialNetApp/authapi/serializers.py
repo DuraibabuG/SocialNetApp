@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
+from rest_framework import validators
 from datetime import datetime, date, timezone
 
 
@@ -9,28 +9,33 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta():
         model = User
         fields = (
-            'first_name', 'last_name', 'email', 'is_active', 'date_joined', 'password'
+            'first_name', 'last_name', 'email', 'is_active', 'date_joined', 'password', 'gender'
         )
         extra_kwargs = {
+            'password':{'write_only':True},
             'email': {
-                'validators': [
-                        UniqueValidator(
-                            queryset=User.objects.all(),
-                            message='Email already exisit!'
-                        )
-                    ]
+                'required':True,
+                'allow_blank':False,
+                'validators':[
+                    validators.UniqueValidator(
+                        User.objects.all(), 'A user already registered with given email!'
+                    )
+                ]
             }
         }
 
     def create(self, validated_data):
         print(validated_data, 'validated_data')
-        user_obj = User.objects.create(
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_namae'],
-            email=validated_data['email'],
-            is_active=validated_data['is_active'],
-            date_joined=datetime.now(timezone.utc),
-            created=datetime.now(timezone.utc)
+        user_obj = User(
+            first_name = validated_data['first_name'],
+            last_name = validated_data['last_name'],
+            email = validated_data['email'],
+            username = validated_data['email'],
+            gender = validated_data['gender'],
+            is_active = validated_data['is_active'],
+            date_joined = datetime.now(timezone.utc),
+            created = datetime.now(timezone.utc)
         )
         user_obj.set_password(validated_data['password'])
+        user_obj.save()
         return user_obj
