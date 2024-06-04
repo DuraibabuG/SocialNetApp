@@ -39,3 +39,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user_obj.set_password(validated_data['password'])
         user_obj.save()
         return user_obj
+
+class SearchUserSerializer(serializers.Serializer):
+    req_data = serializers.CharField()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'id')
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = '__all__'
