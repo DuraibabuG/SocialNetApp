@@ -48,11 +48,21 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    # 'EXCEPTION_HANDLER': 'rcmtool.utils.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication', ),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 10,
+     'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/min',
+        'user': '50/min',
+        'user_sec': '2/second',
+        'user_min': '3/minute',
+        'user_hour': '7200/hour',
+    },
 }
 
 CORS_ALLOW_ALL_ORIGINS : True

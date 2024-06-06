@@ -52,3 +52,10 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
         fields = '__all__'
+
+class SendFriendRequestSerializer(serializers.Serializer):
+    to_user_id = serializers.IntegerField()
+
+class FriendRequestActionSerializer(serializers.Serializer):
+    request_id = serializers.IntegerField()
+    action = serializers.ChoiceField(choices=['accept', 'reject'])
