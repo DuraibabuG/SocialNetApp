@@ -64,6 +64,7 @@ python manage.py migrate
 
 bash
 python manage.py runserver
+# To view api 127.0.0.1:8000/swagger/
 # API Endpoints
 ## User Signup
 URL: /authapi/sign_up/
