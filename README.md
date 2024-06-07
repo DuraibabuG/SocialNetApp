@@ -26,24 +26,18 @@ searching users, sending/accepting/rejecting friend requests, listing friends, a
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/social-network-api.git
-   cd social-network-api
+   git clone https://github.com/DuraibabuG/SocialNetApp.git
+   cd SocialNetApp
    Create and activate a virtual environment:
-   ```
+   python -m venv venv
+   source venv/bin/activate # On Windows use `.\venv\Scripts\activate`
+  ```
 
-bash
-Copy code
-python -m venv venv
-source venv/bin/activate # On Windows use `venv\Scripts\activate`
-Install the dependencies:
-
-bash
-Copy code
+# Install the dependencies:
 pip install -r requirements.txt
-Configure the database:
-or you can install all using pip install
 
-you can go on admine also frist create superuser - 
+# Configure the database:
+or you can install all using pip install
 
 Update the DATABASES setting in settings.py with your database configuration.
 
@@ -63,151 +57,147 @@ Apply migrations:
 
 bash
 Copy code
+cd SocialNetApp
 python manage.py migrate
-Create a superuser:
+
+# Run the development server:
 
 bash
-Copy code
-python manage.py createsuperuser
-Run the development server:
-
-bash
-Copy code
 python manage.py runserver
-API Endpoints
-User Signup
-URL: /api/signup/
+# API Endpoints
+## User Signup
+URL: /authapi/sign_up/
 Method: POST
 Request:
 json
-Copy code
 {
-"email": "user@example.com",
-"username": "username",
-"password": "password",
-"first_name": "First",
-"last_name": "Last"
+  "first_name": "First",
+  "last_name": "Last",
+  "email": "user@example.com",
+  "is_active": true,
+  "date_joined": "2024-06-07T16:53:35.365Z",
+  "password": "password",
+  "gender": "M" #/"F"
 }
+
 Response:
 json
-Copy code
 {
-"user": {
-"id": 1,
-"email": "user@example.com",
-"username": "username",
-"first_name": "First",
-"last_name": "Last"
-},
-"refresh": "refresh_token",
-"access": "access_token"
+  "user_info": {
+    "id": 13,
+    "email": "user@example.com",
+    "first_name": "First",
+    "last_name": "Last",
+    "gender": "M"
+  },
+  "token": "access_token"  # Authenticate using this token by following format without "" - "Token access_token" 
 }
-User Login
-URL: /api/token/
+
+## User Login
+URL: /authapi/login/
 Method: POST
 Request:
 json
-Copy code
 {
 "email": "user@example.com",
 "password": "password"
 }
 Response:
 json
-Copy code
 {
-"refresh": "refresh_token",
-"access": "access_token"
+  "info": "userinfo", # to view use base64 decription
+  "token": "access_token" # use this token to authenticate
 }
-Search Users
-URL: /api/search/
-Method: GET
-Request: ?q=search_query
+
+## Search Users
+URL: /authapi/search_user/
+Method: POST
+Request: {
+  "req_data": "string"
+}
 Response:
 json
-Copy code
-[
 {
-"id": 1,
-"email": "user@example.com",
-"username": "username",
-"first_name": "First",
-"last_name": "Last"
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "first_name": "First",
+      "last_name": "Last",
+      "email": "user@example.com",
+      "id": 13
+    }
+  ]
 }
-]
-Send Friend Request
-URL: /api/friend-request/send/
+
+## Send Friend Request
+URL: /authapi/friend_request_send/
 Method: POST
 Request:
 json
-Copy code
 {
-"to_user_id": 2
+  "to_user_id": 2
 }
 Response:
 json
-Copy code
 {
-"message": "Friend request sent"
+  "message": "Friend request sent"
 }
-Accept/Reject Friend Request
-URL: /api/friend-request/action/
+
+## Accept/Reject Friend Request
+URL: /authapi/frien_request_action/
 Method: POST
 Request:
 json
-Copy code
 {
-"request_id": 1,
-"action": "accept" # or "reject"
+  "request_id": 1,
+  "action": "accept"  # or "reject"
 }
 Response:
 json
-Copy code
 {
-"message": "Friend request accepted"
+  "message": "Friend request accepted"
 }
-List Friends
-URL: /api/friends/
+
+## List Friends
+URL: /authapi/friends_list/
 Method: GET
 Response:
 json
-Copy code
-[
 {
-"id": 2,
-"email": "friend@example.com",
-"username": "friend",
-"first_name": "Friend",
-"last_name": "User"
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "first_name": "Akilan",
+      "last_name": "H",
+      "email": "akilanh@example.com",
+      "id": 7
+    }
+  ]
 }
-]
-List Pending Friend Requests
-URL: /api/friend-requests/pending/
+
+## List Pending Friend Requests
+URL: /authapi/friend_requests_pending/
 Method: GET
 Response:
 json
-Copy code
-[
 {
-"id": 1,
-"from_user": {
-"id": 1,
-"email": "user@example.com",
-"username": "username",
-"first_name": "First",
-"last_name": "Last"
-},
-"to_user": {
-"id": 2,
-"email": "friend@example.com",
-"username": "friend",
-"first_name": "Friend",
-"last_name": "User"
-},
-"status": "pending",
-"timestamp": "2024-01-01T12:00:00Z"
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "status": "pending",
+      "created_at": "2024-06-06T18:42:19.228239Z",
+      "from_user": 9,
+      "to_user": 13
+    }
+  ]
 }
-]
 
 
-#Contributed BY - SANDEEP TALE
+# Contributed BY - DURAIBABU G
